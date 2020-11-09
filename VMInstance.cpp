@@ -2,6 +2,7 @@
 bool VMInstance::create_args() {
     string verbose_information = "";
     buffer_args = new char*[argument_size];
+    LOG_V("Creating argument array, size of: " + to_string(argument_size));
 
     // VMRUN
     buffer_args[0] = new char[argument_buffer];
@@ -17,7 +18,7 @@ bool VMInstance::create_args() {
     buffer_args[2] = new char[argument_buffer];
     // error checking support for VM Type, using default.
     if (vm_type != "ws" && vm_type != "fusion") {
-        cerr << "Using Default option for -T \"vm_type\", which is fusion." << endl;
+        LOG_E("VM Type is not defined, using default value: " + string(DEFAULT_VM_TYPE));
         vm_type = string(DEFAULT_VM_TYPE);
     }
     strcpy(buffer_args[2], vm_type.c_str());
@@ -45,8 +46,7 @@ bool VMInstance::create_args() {
     }
     verbose_information += " " + string(buffer_args[5]);
 
-
-    cout << "Created Argument: " << verbose_information << endl;
+    LOG_V("Argument created for VMInstance: " + verbose_information);
 
     // Last PTR should be null at all.
     buffer_args[6] = nullptr;
@@ -60,7 +60,7 @@ VMInstance::VMInstance() {
     for (filesystem::path& whitelist : vmrun_whitelist) {
         if (filesystem::exists(whitelist)) {
             this->vmrun_path = whitelist;
-            cout << "VMRUN Path: " << this->vmrun_path << endl;
+            LOG_V("Vmrun binary path found: " + this->vmrun_path.string());
             break;
         }
     }
@@ -69,6 +69,11 @@ VMInstance::VMInstance() {
     if (this->vmrun_path == filesystem::path("/")) {
         // NO VMRUN Binary found.
         cerr << "VMRUN binary is not found on whitelist of this program. \nManually add vmrun binary path on this program!" << endl;
+        LOG_E("VMRun is NOT Found in whitelist.");
+        LOG_E("VMRun Whitelists are:");
+        for (filesystem::path& whitelist : vmrun_whitelist) {
+            LOG_E(whitelist.string());
+        }
         exit(EXIT_FAILURE);
     }
 
@@ -77,7 +82,7 @@ VMInstance::VMInstance() {
     for (filesystem::path& whitelist : ssh_whitelist) {
         if (filesystem::exists(whitelist)) {
             this->ssh_path = whitelist;
-            cout << "SSH Path: " << this->ssh_path << endl;
+            LOG_V("SSH binary path found: " + this->ssh_path.string());
             break;
         }
     }
@@ -85,18 +90,26 @@ VMInstance::VMInstance() {
     if (this->ssh_path == filesystem::path("/")) {
         // NO VMRUN Binary found.
         cerr << "SSH binary is not found on whitelist of this program. \nManually add SSH binary path on this program!" << endl;
+        LOG_E("SSH is NOT Found in whitelist.");
+        LOG_E("SSH Whitelists are:");
+        for (filesystem::path& whitelist : ssh_whitelist) {
+            LOG_E(whitelist.string());
+        }
         exit(EXIT_FAILURE);
     }
 
     // for now, set gui to false
     this->state[CONTROL_IS_GUI] = false;
+    LOG_V("GUI Set to false[nogui]");
 
     // for now, set vmx to mine
     this->vmx_path = filesystem::absolute(filesystem::path("/Users/KangDroid/Virtual Machines.localized/Ubuntu 64-bit Server 20.10.vmwarevm/Ubuntu 64-bit Server 20.10.vmx"));
     if (!filesystem::exists(this->vmx_path)) {
         cerr << "VMX Not found" << endl;
+        LOG_E("VMX For input: " + this->vmx_path.string() + " Not found.");
         exit(EXIT_FAILURE);
     }
+    LOG_V("VMX Found: " + this->vmx_path.string());
 }
 
 VMInstance::~VMInstance() {
@@ -126,6 +139,8 @@ bool VMInstance::turn_on_vm() {
         int return_value;
         wait(&return_value);
         if (WEXITSTATUS(return_value) != 0) {
+            LOG_E("Process Returned non-zero value. This might indicates error when executing vmrun.");
+            LOG_E("See STDOUT[output] for more details");
             cerr << "Process Returned: " << WEXITSTATUS(return_value) << endl;
             return false;
         }
@@ -149,12 +164,15 @@ bool VMInstance::turn_on_vm() {
             string tmp_str = string(ip_buffer);
             this->ip_addr = tmp_str.substr(0, tmp_str.find('\n'));
             cout << this->ip_addr << endl;
+            LOG_V("IP Address of VM Instance: " + this->ip_addr);
         }
     }
 
     if (this->state[CONTROL_START_SSH_SHELL]) {
+        LOG_V("SSH-ing detected.");
         // Kill this self process[?] and exec ssh.
         string ssh_args = this->user_name + "@" + this->ip_addr;
+        LOG_V("SSH Argument: " + ssh_args);
         execl(this->ssh_path.c_str(), "ssh", ssh_args.c_str(), NULL);
     }
     return true;
@@ -171,6 +189,8 @@ bool VMInstance::turn_off_vm() {
         int return_value;
         wait(&return_value);
         if (WEXITSTATUS(return_value) != 0) {
+            LOG_E("Process Returned non-zero value. This might indicates error when executing vmrun.");
+            LOG_E("See STDOUT[output] for more details");
             cerr << "Process Returned: " << WEXITSTATUS(return_value) << endl;
             return false;
         }
