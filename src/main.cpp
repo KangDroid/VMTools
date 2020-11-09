@@ -61,7 +61,7 @@ int main(int argc, char** argv) {
     char buffer_time[128];
     strftime(buffer_time, sizeof(buffer_time), "%Y%m%d-%H%M%S", localtime(&current_time));
     string file_name(buffer_time);
-    if (!Logger::initiate_stream("LOG_" + file_name + ".log")) {
+    if (!Logger::initiate_stream("/tmp/LOG_" + file_name + ".log")) {
         cerr << "Initiating logger failed." << endl;
         cerr << "Ignoring logger feature." << endl;
     }
