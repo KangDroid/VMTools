@@ -1,0 +1,4 @@
+VM_TOOLS
+build/
+*.o
+.vscode/
