@@ -45,6 +45,9 @@ private:
     // VM Type, ws or fusion
     string vm_type;
 
+    // IP Address of Current Instance. - Initialized when turn_on_vm called.
+    string ip_addr;
+
     // argument of buffer --> Dynamically generated.
     char** buffer_args;
 

@@ -95,6 +95,11 @@ VMInstance::~VMInstance() {
 }
 
 bool VMInstance::turn_on_vm() {
+    // PIPE Support
+    int fd[2];
+    char ip_buffer[16];
+    pipe(fd);
+
     // Both PR/CHILD should share control bits
     this->state[CONTROL_TURN_ON] = true;
     pid_t fork_id = fork();
@@ -110,6 +115,26 @@ bool VMInstance::turn_on_vm() {
         }
     }
 
+    // By default, get IP Information of VM Instance.
+    cout << "Getting IP Information of VM Instance.." << endl;
+    fork_id = fork();
+    if (fork_id == 0) {
+        dup2(fd[1], STDOUT_FILENO);
+        close(fd[0]);
+        close(fd[1]);
+        execl(this->vmrun_path.c_str(), "vmrun", "-T" ,this->vm_type.c_str(), "getGuestIPAddress", this->vmx_path.c_str(), "-wait", NULL);
+    } else {
+        int return_value;
+        close(fd[1]);
+        wait(&return_value);
+        if (WEXITSTATUS(return_value) == 0) {
+            int read_val = read(fd[0], ip_buffer, 16);
+            // ip_buffer contains \n, trail that one.
+            string tmp_str = string(ip_buffer);
+            this->ip_addr = tmp_str.substr(0, tmp_str.find('\n'));
+            cout << this->ip_addr << endl;
+        }
+    }
     return true;
 }
 
