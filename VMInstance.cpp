@@ -72,6 +72,22 @@ VMInstance::VMInstance() {
         exit(EXIT_FAILURE);
     }
 
+    // Find SSH
+    this->ssh_path = filesystem::path("/");
+    for (filesystem::path& whitelist : ssh_whitelist) {
+        if (filesystem::exists(whitelist)) {
+            this->ssh_path = whitelist;
+            cout << "SSH Path: " << this->ssh_path << endl;
+            break;
+        }
+    }
+    // if this state reached, that means there is no binary.
+    if (this->ssh_path == filesystem::path("/")) {
+        // NO VMRUN Binary found.
+        cerr << "SSH binary is not found on whitelist of this program. \nManually add SSH binary path on this program!" << endl;
+        exit(EXIT_FAILURE);
+    }
+
     // for now, set gui to false
     this->state[CONTROL_IS_GUI] = false;
 
@@ -135,6 +151,12 @@ bool VMInstance::turn_on_vm() {
             cout << this->ip_addr << endl;
         }
     }
+
+    if (this->state[CONTROL_START_SSH_SHELL]) {
+        // Kill this self process[?] and exec ssh.
+        string ssh_args = this->user_name + "@" + this->ip_addr;
+        execl(this->ssh_path.c_str(), "ssh", ssh_args.c_str(), NULL);
+    }
     return true;
 }
 
@@ -154,4 +176,9 @@ bool VMInstance::turn_off_vm() {
         }
     }
     return true;
+}
+
+void VMInstance::set_ssh_user(string username) {
+    this->state[CONTROL_START_SSH_SHELL] = true;
+    this->user_name = username;
 }

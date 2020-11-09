@@ -17,11 +17,12 @@ using namespace std;
  * 2: CONTROL_TURN_ON | Control Boolean for whether to turn on or turn off. Used when creating argument. True for turning on VM, False for turning off vm.
  * Those values are initially set to false.
  */
-#define STATE_SIZE 3
+#define STATE_SIZE 4
 
 #define TURNED_ON 0
 #define CONTROL_IS_GUI 1 // BIT IS DEFINED WHEN CLASS GENERATION(CONSTRUCTOR)
 #define CONTROL_TURN_ON 2 // BIT IS DEFINED WHEN FUNCTION STARTS
+#define CONTROL_START_SSH_SHELL 3 // BIT IS DEFINED when main() detects ssh username.
 
 /**
  * Default Value
@@ -32,7 +33,7 @@ class VMInstance {
 private:
     const static size_t argument_size = 40; // Limit: 40 Arguments
     const static size_t argument_buffer = 1024; // support 1024 characters per each argument
-    bool state[STATE_SIZE] = {false, false, false};
+    bool state[STATE_SIZE] = {false, false, false, false};
     filesystem::path vmx_path;
 
     /**
@@ -42,11 +43,21 @@ private:
     vector<filesystem::path> vmrun_whitelist = {"/Applications/VMware Fusion.app/Contents/Public/vmrun"};
     filesystem::path vmrun_path; // VMRUN Binary Path
 
+    /**
+     * SSH Binary Path whitelist.
+     * Add more if there any.
+     */
+    vector<filesystem::path> ssh_whitelist = {"/usr/bin/ssh"};
+    filesystem::path ssh_path; // SSH Binary Path
+
     // VM Type, ws or fusion
     string vm_type;
 
     // IP Address of Current Instance. - Initialized when turn_on_vm called.
     string ip_addr;
+
+    // Username of VM Instance - Initialized when main detects it.
+    string user_name;
 
     // argument of buffer --> Dynamically generated.
     char** buffer_args;
@@ -58,4 +69,5 @@ public:
     ~VMInstance();
     bool turn_on_vm();
     bool turn_off_vm();
+    void set_ssh_user(string username);
 };

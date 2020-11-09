@@ -10,10 +10,16 @@ using namespace std;
 int main(int argc, char** argv) {
     VMInstance vm_instance;
     if (argc < 2) {
-        cerr << "Usage: " << argv[0] << " on/off" << endl;
+        cerr << "Usage: " << argv[0] << " on/off" << " ssh_username"<< endl;
         exit(EXIT_FAILURE);
     }
+
+    // Turn ON/OFF?
     if (!strcmp(argv[1], "on")) {
+        if (argc == 3) {
+            // there is ssh username
+            vm_instance.set_ssh_user(string(argv[2]));
+        }
         if (!vm_instance.turn_on_vm()) {
             cerr << "Turning on VM returned an error." << endl;
             return EXIT_FAILURE;
