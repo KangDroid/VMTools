@@ -21,7 +21,10 @@ int main(int argc, char** argv) {
     char buffer_time[128];
     strftime(buffer_time, sizeof(buffer_time), "%Y%m%d-%H%M%S", localtime(&current_time));
     string file_name(buffer_time);
-    Logger::initiate_stream("LOG_" + file_name + ".log");
+    if (!Logger::initiate_stream("LOG_" + file_name + ".log")) {
+        cerr << "Initiating logger failed." << endl;
+        cerr << "Ignoring logger feature." << endl;
+    }
     
     VMInstance vm_instance;
     LOG_V("Starting Program " + string(argv[0]));
