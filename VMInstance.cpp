@@ -55,6 +55,9 @@ bool VMInstance::create_args() {
 }
 
 VMInstance::VMInstance() {
+    // Initialize buffer_args
+    buffer_args = nullptr;
+    
     // Find VMRUN First.
     this->vmrun_path = filesystem::path("/");
     for (filesystem::path& whitelist : vmrun_whitelist) {
