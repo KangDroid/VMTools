@@ -2,3 +2,4 @@ VM_TOOLS
 build/
 *.o
 .vscode/
+remove.sh
