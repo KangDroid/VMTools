@@ -1,5 +1,6 @@
 #include <iostream>
 #include <filesystem>
+#include <ctime>
 
 #include <unistd.h>
 #include <sys/wait.h>
@@ -14,7 +15,14 @@ void when_exit() {
 }
 
 int main(int argc, char** argv) {
-    Logger::initiate_stream("Log.txt");
+    // Initiate Logger
+    time_t current_time;
+    time(&current_time);
+    char buffer_time[128];
+    strftime(buffer_time, sizeof(buffer_time), "%Y%m%d-%H%M%S", localtime(&current_time));
+    string file_name(buffer_time);
+    Logger::initiate_stream("LOG_" + file_name + ".log");
+    
     VMInstance vm_instance;
     LOG_V("Starting Program " + string(argv[0]));
     // We need to close stream when abnormal exit is called.
