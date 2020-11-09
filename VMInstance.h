@@ -48,7 +48,7 @@ private:
      * SSH Binary Path whitelist.
      * Add more if there any.
      */
-    vector<filesystem::path> ssh_whitelist = {"/usr/bin/ssh"};
+    vector<filesystem::path> ssh_whitelist = {"/usr/bin/ssh", "/usr/local/bin/ssh", "/bin/ssh"};
     filesystem::path ssh_path; // SSH Binary Path
 
     // VM Type, ws or fusion
