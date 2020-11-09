@@ -4,6 +4,8 @@ project(VM_TOOLS)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_BUILD_TYPE Debug)
 
+set(CMAKE_CXX_FLAGS "-Wall -O3 -Wno-deprecated-declarations -Wno-unneeded-internal-declaration")
+
 include_directories(${VM_TOOLS_SOURCE_DIR}/include)
 
-add_executable(VM_TOOLS src/main.cpp src/VMInstance.cpp src/Logger.cpp)
+add_executable(VM_TOOLS src/main.cpp src/VMInstance.cpp src/Logger.cpp src/jsoncpp.cpp)

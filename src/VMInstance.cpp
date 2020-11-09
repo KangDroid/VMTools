@@ -104,15 +104,6 @@ VMInstance::VMInstance() {
     // for now, set gui to false
     this->state[CONTROL_IS_GUI] = false;
     LOG_V("GUI Set to false[nogui]");
-
-    // for now, set vmx to mine
-    this->vmx_path = filesystem::absolute(filesystem::path("/Users/KangDroid/Virtual Machines.localized/Ubuntu 64-bit Server 20.10.vmwarevm/Ubuntu 64-bit Server 20.10.vmx"));
-    if (!filesystem::exists(this->vmx_path)) {
-        cerr << "VMX Not found" << endl;
-        LOG_E("VMX For input: " + this->vmx_path.string() + " Not found.");
-        exit(EXIT_FAILURE);
-    }
-    LOG_V("VMX Found: " + this->vmx_path.string());
 }
 
 VMInstance::~VMInstance() {
@@ -124,6 +115,17 @@ VMInstance::~VMInstance() {
         }
         delete[] buffer_args;
     }
+}
+//filesystem::path("/Users/KangDroid/Virtual Machines.localized/Ubuntu 64-bit Server 20.10.vmwarevm/Ubuntu 64-bit Server 20.10.vmx")
+void VMInstance::init_vmx_username(filesystem::path vmx_dir) {
+    // for now, set vmx to mine
+    this->vmx_path = filesystem::absolute(vmx_dir);
+    if (!filesystem::exists(this->vmx_path)) {
+        cerr << "VMX Not found" << endl;
+        LOG_E("VMX For input: " + this->vmx_path.string() + " Not found.");
+        exit(EXIT_FAILURE);
+    }
+    LOG_V("VMX Found: " + this->vmx_path.string());
 }
 
 bool VMInstance::turn_on_vm() {

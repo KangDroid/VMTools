@@ -68,6 +68,7 @@ private:
 public:
     VMInstance();
     ~VMInstance();
+    void init_vmx_username(filesystem::path vmx_path);
     bool turn_on_vm();
     bool turn_off_vm();
     void set_ssh_user(string username);

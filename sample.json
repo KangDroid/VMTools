@@ -1,0 +1,9 @@
+{
+    "machine" :[
+        {
+            "machine_name" : "Ubuntu 20.10 Server",
+            "machine_login" : "kangdroid",
+            "machine_path" : "/Users/KangDroid/Virtual Machines.localized/Ubuntu 64-bit Server 20.10.vmwarevm/Ubuntu 64-bit Server 20.10.vmx"
+        }
+    ]
+}
