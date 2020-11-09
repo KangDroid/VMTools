@@ -104,7 +104,10 @@ bool VMInstance::turn_on_vm() {
     } else {
         int return_value;
         wait(&return_value);
-        cout << "Process Returned: " << WEXITSTATUS(return_value) << endl;
+        if (WEXITSTATUS(return_value) != 0) {
+            cerr << "Process Returned: " << WEXITSTATUS(return_value) << endl;
+            return false;
+        }
     }
 
     return true;
@@ -120,7 +123,10 @@ bool VMInstance::turn_off_vm() {
     } else {
         int return_value;
         wait(&return_value);
-        cout << "Process Returned: " << WEXITSTATUS(return_value) << endl;
+        if (WEXITSTATUS(return_value) != 0) {
+            cerr << "Process Returned: " << WEXITSTATUS(return_value) << endl;
+            return false;
+        }
     }
     return true;
 }
