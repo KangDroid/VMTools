@@ -122,7 +122,7 @@ int main(int argc, char** argv) {
     if (global_info.json_path == filesystem::path("/")) {
         cout << "Json Path is not specified, by default, this program will use installation path" << endl;
         LOG_E("Json path is not defined, therefore using /Users/KangDroid/Desktop/kdr_vm_tools/sample.json for default json path.");
-        global_info.json_path = filesystem::path("/Users/KangDroid/Desktop/kdr_vm_tools/sample.json");
+        global_info.json_path = filesystem::path("/Users/KangDroid/Desktop/kdr_vm_tools/assets/sample.json");
     }
     if (global_info.machine_identifier == -1) {
         cout << "Machine Identifier is not defined, by default, this program will use 0." << endl;
