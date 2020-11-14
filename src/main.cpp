@@ -132,7 +132,7 @@ int main(int argc, char** argv) {
     if (global_info.ssh_use == -1) {
         cout << "SSH is not defined, by default, this program will not change shell to ssh one" << endl;
         LOG_E("SSH is not defined, setting value to false[not-using].");
-        global_info.ssh_use = true;
+        global_info.ssh_use = false;
     }
     if (global_info.turn_state != global_info.TURN_ON && global_info.turn_state != global_info.TURN_OFF) {
         cerr << "Turning State is not defined." << endl;
