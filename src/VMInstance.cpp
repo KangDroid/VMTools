@@ -54,9 +54,45 @@ bool VMInstance::create_args() {
     return true;
 }
 
+/**
+ * Split String by "delim"
+ * Returns vector when successfully splitted.
+ */
+vector<string> VMInstance::split_string(string input, char delim) {
+    vector<string> return_value;
+    string tmp = "";
+    for (int i = 0; i < input.length(); i++) {
+        if (input.at(i) == delim) {
+            return_value.push_back(tmp);
+            tmp = "";
+        } else {
+            tmp += input.at(i);
+        }
+    }
+    if (tmp.length() != 0) {
+        return_value.push_back(tmp);
+    }
+
+    return return_value;
+}
+
 VMInstance::VMInstance() {
     // Initialize buffer_args
     buffer_args = nullptr;
+
+    // Init Whitelist - Get ENV
+    string input_path = string(std::getenv("PATH"));
+    vector<string> whitelist_envpath = split_string(input_path, ':');
+
+    // Init Whitelist - VMRUN
+    for (string& envpath : whitelist_envpath) {
+        this->vmrun_whitelist.push_back(envpath+"/vmrun");
+    }
+
+    // Init Whitelist - SSH
+    for (string& envpath : whitelist_envpath) {
+        this->ssh_whitelist.push_back(envpath+"/ssh");
+    }
     
     // Find VMRUN First.
     this->vmrun_path = filesystem::path("/");

@@ -72,4 +72,5 @@ public:
     bool turn_on_vm();
     bool turn_off_vm();
     void set_ssh_user(string username);
+    vector<string> split_string(string input, char delim);
 };
